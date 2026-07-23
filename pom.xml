@@ -30,7 +30,7 @@
 
     <name>Apple SonarQube Plugin</name>
     <description>Enables analysis of Swift and Objective-C projects into SonarQube.</description>
-    <url>https://github.com/insideapp-oss/sonar-apple</url>
+    <url>https://github.com/insideapp-fr/sonar-apple</url>
 
     <modules>
         <module>commons</module>
@@ -42,7 +42,7 @@
     <inceptionYear>2022</inceptionYear>
     <organization>
         <name>inside|app</name>
-        <url>https://github.com/insideapp-oss</url>
+        <url>https://github.com/insideapp-fr</url>
     </organization>
     <licenses>
         <license>
@@ -76,9 +76,9 @@
     </developers>
 
     <scm>
-        <connection>scm:git:git@github.com:insideapp-oss/sonar-apple.git</connection>
-        <developerConnection>scm:git:git@github.com:insideapp-oss/sonar-apple.git</developerConnection>
-        <url>https://github.com/insideapp-oss/sonar-apple</url>
+        <connection>scm:git:git@github.com:insideapp-fr/sonar-apple.git</connection>
+        <developerConnection>scm:git:git@github.com:insideapp-fr/sonar-apple.git</developerConnection>
+        <url>https://github.com/insideapp-fr/sonar-apple</url>
         <tag>HEAD</tag>
     </scm>
 

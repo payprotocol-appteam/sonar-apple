@@ -12,7 +12,7 @@ assignees: ''
 ### New Issue Checklist
 
 - [ ] Updated the plugin to the latest version 
-- [ ] I searched for existing [GitHub issues](https://github.com/insideapp-oss/sonar-apple/issues)
+- [ ] I searched for existing [GitHub issues](https://github.com/insideapp-fr/sonar-apple/issues)
 
 ### Issue Description
 <!-- Please include what's happening, expected behavior, and any relevant code samples -->

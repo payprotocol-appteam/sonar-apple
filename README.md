@@ -1,5 +1,5 @@
 
-![CI](https://github.com/insideapp-oss/sonar-flutter/workflows/CI/badge.svg)
+![CI](https://github.com/insideapp-fr/sonar-flutter/workflows/CI/badge.svg)
 
 [![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=insideapp-oss_sonar-apple&metric=sqale_index)](https://sonarcloud.io/summary/new_code?id=insideapp-oss_sonar-apple)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=insideapp-oss_sonar-apple&metric=coverage)](https://sonarcloud.io/summary/new_code?id=insideapp-oss_sonar-apple)
@@ -157,8 +157,8 @@ You can either:
 
 Any help is welcome, and PRs will be greatly appreciated!
 
-Have a look at the [developer guide](https://github.com/insideapp-oss/sonar-apple/blob/main/DEVELOP.md) to get started.
+Have a look at the [developer guide](https://github.com/insideapp-fr/sonar-apple/blob/main/DEVELOP.md) to get started.
 
 ## License
 
-This plugin is released under the GNU LGPL v3 license. See the [LICENSE](https://github.com/insideapp-oss/sonar-apple/blob/main/LICENSE.md) file for more information.
+This plugin is released under the GNU LGPL v3 license. See the [LICENSE](https://github.com/insideapp-fr/sonar-apple/blob/main/LICENSE.md) file for more information.
