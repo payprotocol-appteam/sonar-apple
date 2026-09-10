@@ -31,7 +31,9 @@
     <properties>
         <!-- versions -->
         <antlr.version>4.13.0</antlr.version>
-        <jackson.version>2.17.0</jackson.version>
+        <!-- 2.17.0 declares byte-buddy at compile scope by mistake (4.2 MB dragged into the plugin jar),
+             fixed in 2.17.3 where it is back to test scope. 2.18+ needs it at runtime again. -->
+        <jackson.version>2.17.3</jackson.version>
     </properties>
 
     <dependencies>
