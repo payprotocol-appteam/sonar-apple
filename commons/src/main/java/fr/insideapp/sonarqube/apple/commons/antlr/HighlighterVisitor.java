@@ -104,7 +104,11 @@ public class HighlighterVisitor implements ParseTreeItemVisitor {
         if (file == null) {
             return;
         }
-        final NewCpdTokens cpdTokens = context.newCpdTokens().onFile(file);
+        // Duplication is only computed on main files: SonarQube drops CPD tokens saved for a test file
+        // and warns about each of them ("Duplication reported for '...' will be ignored because it's a
+        // test file"), so they are not sent in the first place. Highlighting applies to both.
+        final boolean cpdEnabled = file.type() == InputFile.Type.MAIN;
+        final NewCpdTokens cpdTokens = cpdEnabled ? context.newCpdTokens().onFile(file) : null;
         final NewHighlighting newHighlighting = context.newHighlighting().onFile(file);
 
         for (final Token token : antlrContext.getTokens()) {
@@ -144,7 +148,9 @@ public class HighlighterVisitor implements ParseTreeItemVisitor {
             try {
                 final TextRange range = file.newRange(startLine, startLineOffset, endLine, endLineOffset);
                 addHighlighting(newHighlighting, token, file, range);
-                addCpdToken(cpdTokens, file, token, range);
+                if (cpdEnabled) {
+                    addCpdToken(cpdTokens, file, token, range);
+                }
             } catch (final Exception e) {
                 LOGGER.warn(format(
                                 "Unexpected error creating text range on file %s for token %s on (%s, %s) -  (%s, %s)",
@@ -159,10 +165,12 @@ public class HighlighterVisitor implements ParseTreeItemVisitor {
                 LOGGER.warn(format("Unexpected error saving highlightings on file %s", file.key()), e);
             }
 
-            try {
-                cpdTokens.save();
-            } catch (Exception e) {
-                LOGGER.warn(format("Unexpected error saving cpd tokens on file %s", file.key()), e);
+            if (cpdEnabled) {
+                try {
+                    cpdTokens.save();
+                } catch (Exception e) {
+                    LOGGER.warn(format("Unexpected error saving cpd tokens on file %s", file.key()), e);
+                }
             }
         }
     }

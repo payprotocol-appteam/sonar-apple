@@ -78,6 +78,11 @@ public final class ReportIssueRecorder {
                     }
                     // Associating the location to the issue and saving it.
                     sonarIssue.at(sonarIssueLocation).save();
+                } else if (fs.hasFiles(pathPredicate)) {
+                    // The file is indexed, just not as a main file: the linter was pointed at the test
+                    // sources as well. Issues are only recorded on main files, which is a deliberate
+                    // choice and not a misconfiguration worth warning about (256 lines on one iOS project).
+                    LOGGER.debug("Issue reported on a file that is not a main file, ignoring: {}", filePath);
                 } else {
                     LOGGER.warn("File not included in SonarQube sources {}", filePath);
                 }

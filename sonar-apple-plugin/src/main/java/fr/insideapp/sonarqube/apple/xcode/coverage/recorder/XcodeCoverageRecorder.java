@@ -78,7 +78,10 @@ public final class XcodeCoverageRecorder implements XcodeCoverageRecordable {
         if(context.fileSystem().hasFiles(fp)) {
             return context.fileSystem().inputFile(fp);
         } else {
-            LOGGER.warn("Can't find file {}", filePath);
+            // Expected, not actionable: an Xcode result bundle carries coverage for everything that got
+            // compiled, SPM checkouts and system frameworks included, and none of those belong to
+            // sonar.sources. Warning on each of them buried the analysis log (666 lines on one iOS project).
+            LOGGER.debug("Coverage reported for a file that is not part of the project, ignoring: {}", filePath);
             return null;
         }
     }

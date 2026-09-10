@@ -185,6 +185,33 @@ public class HighlighterVisitorTest {
                 .containsExactlyInAnyOrder(TypeOfText.KEYWORD_LIGHT);
     }
 
+    /**
+     * SonarQube discards duplication reported on a test file and warns about every token, so CPD tokens
+     * are only sent for main files. Highlighting still applies to both.
+     */
+    @Test
+    public void fillContextOnTestFile() {
+        final String contents = "let ab = 1\n";
+        SensorContextTester sensorContext = SensorContextTester.create(new File(""));
+        DefaultInputFile testFile = new TestInputFileBuilder("foo", "testFileTest.extension")
+                .setModuleBaseDir(Paths.get("/"))
+                .setCharset(StandardCharsets.UTF_8)
+                .setType(InputFile.Type.TEST)
+                .setContents(contents)
+                .initMetadata(contents)
+                .build();
+        sensorContext.fileSystem().add(testFile);
+
+        StubAntlrContext antlrContext = new StubAntlrContext();
+        antlrContext.load(testFile, contents, token(KEYWORD_TYPE, "let", 0));
+
+        visitor().fillContext(sensorContext, antlrContext);
+
+        assertThat(sensorContext.highlightingTypeAt(testFile.key(), 1, 0))
+                .containsExactlyInAnyOrder(TypeOfText.KEYWORD);
+        assertThat(sensorContext.cpdTokens(testFile.key())).isNull();
+    }
+
     @Test
     public void lineAndColumnAreUtf16Based() {
         final SourceLine[] lines = new SourceLinesProvider().getLines(
