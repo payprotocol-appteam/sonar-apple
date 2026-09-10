@@ -1,6 +1,10 @@
+# Upstream (insideapp-fr) pipeline, kept as-is for easier syncing but NOT run automatically in this fork:
+# the "Analyze" step below publishes to insideapp's SonarCloud organization with secrets we do not have,
+# so on every push it would fail and turn the checks red. This fork is gated by `build.yml` instead.
+# Trigger this one manually if you ever need to reproduce upstream's job.
 name: CI
 
-on: [push]
+on: [workflow_dispatch]
 
 jobs:
   build:
