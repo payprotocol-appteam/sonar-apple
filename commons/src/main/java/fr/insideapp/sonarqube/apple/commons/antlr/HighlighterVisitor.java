@@ -108,20 +108,38 @@ public class HighlighterVisitor implements ParseTreeItemVisitor {
         final NewHighlighting newHighlighting = context.newHighlighting().onFile(file);
 
         for (final Token token : antlrContext.getTokens()) {
-            final int startLine = token.getLine();
-            final int startLineOffset = token.getCharPositionInLine();
-            final int[] endDetails = antlrContext.getLineAndColumn(token.getStopIndex());
-
-            if (endDetails == null
-                    || endDetails.length != 2
-                    || token.getType() == Recognizer.EOF
-                    || token.getType() == whitespaceType
-                    || token.getStartIndex() >= token.getStopIndex()) {
+            if (token.getType() == Recognizer.EOF || token.getType() == whitespaceType) {
                 continue;
             }
 
+            // Index of the last character actually belonging to the token, trailing line terminators excluded:
+            // some tokens swallow their end of line (Swift `Line_comment` is `'//' .*? ('\n' | EOF)`) and a
+            // TextRange cannot span past the end of a line.
+            final int lastIndex = lastSignificantIndex(token);
+            // Single character tokens (mostly punctuation) are ignored
+            if (lastIndex <= token.getStartIndex()) {
+                continue;
+            }
+
+            // Both ends are resolved through the line table: `token.getLine()` / `token.getCharPositionInLine()`
+            // are code point based, whereas SonarQube offsets are UTF-16 based.
+            final int[] startDetails = antlrContext.getLineAndColumn(token.getStartIndex());
+            final int[] endDetails = antlrContext.getLineAndColumn(lastIndex);
+
+            if (startDetails == null || startDetails.length != 2 || endDetails == null || endDetails.length != 2) {
+                continue;
+            }
+
+            final int startLine = startDetails[0];
+            final int startLineOffset = startDetails[1];
             final int endLine = endDetails[0];
-            final int endLineOffset = endDetails[1] + (token.getText().contains("\n") ? 0 : 1);
+            // The line table gives the offset of the last character of the token, the end of a TextRange is
+            // exclusive: hence the + 1.
+            final int endLineOffset = endDetails[1] + 1;
+
+            if (endLine < startLine || (endLine == startLine && endLineOffset <= startLineOffset)) {
+                continue;
+            }
 
             try {
                 final TextRange range = file.newRange(startLine, startLineOffset, endLine, endLineOffset);
@@ -149,6 +167,26 @@ public class HighlighterVisitor implements ParseTreeItemVisitor {
         }
     }
 
+    /**
+     * Index of the last character of a token, trailing line terminators excluded.
+     * Line terminators always are BMP characters, so removing them from a code point index is safe.
+     */
+    private static int lastSignificantIndex(final Token token) {
+        final String text = token.getText();
+        int index = token.getStopIndex();
+        if (text == null) {
+            return index;
+        }
+        for (int i = text.length() - 1; i >= 0 && index > token.getStartIndex(); i--) {
+            final char character = text.charAt(i);
+            if (character != '\n' && character != '\r') {
+                break;
+            }
+            index--;
+        }
+        return index;
+    }
+
     private void addCpdToken(NewCpdTokens cpdTokens, InputFile file, Token token, TextRange range) {
         try {
             cpdTokens.addToken(range, token.getText());
@@ -158,11 +196,6 @@ public class HighlighterVisitor implements ParseTreeItemVisitor {
     }
 
     private void addHighlighting(NewHighlighting newHighlighting, Token token, InputFile file, TextRange range) {
-        // Tokens on a single char are ignored
-        if (range.start().lineOffset() == range.end().lineOffset()) {
-            return;
-        }
-
         try {
             // Comment
             if (commentTypes.contains(token.getType())) {

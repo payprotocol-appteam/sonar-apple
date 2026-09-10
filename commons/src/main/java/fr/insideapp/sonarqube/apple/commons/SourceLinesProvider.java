@@ -32,6 +32,14 @@ import java.util.List;
 public class SourceLinesProvider {
     private static final Logger LOGGER = Loggers.get(SourceLinesProvider.class);
 
+    /**
+     * Builds the line table of a file.
+     * <p>
+     * Positions are counted in <b>Unicode code points</b>, to stay aligned with the token indexes reported by ANTLR
+     * ({@code CodePointCharStream}). A surrogate pair therefore counts for a single position, and the offset of every
+     * supplementary character is recorded so that the column can later be translated back to the UTF-16 offset
+     * SonarQube expects (see {@link SourceLine#toUtf16Column(int)}).
+     */
     public SourceLine[] getLines(final InputStream inputStream, final Charset charset) {
         if (inputStream == null) {
             return new SourceLine[0];
@@ -43,24 +51,42 @@ public class SourceLinesProvider {
             int totalLines = 1;
             int global = 0;
             int count = 0;
+            final List<Integer> supplementaryOffsets = new ArrayList<>();
 
             int currentChar;
             while ((currentChar = bufferedReader.read()) != -1) {
+                if (Character.isHighSurrogate((char) currentChar)) {
+                    bufferedReader.mark(1);
+                    final int lowSurrogate = bufferedReader.read();
+                    if (lowSurrogate != -1 && Character.isLowSurrogate((char) lowSurrogate)) {
+                        // Single code point, but two UTF-16 code units: consume both and remember the offset
+                        supplementaryOffsets.add(count);
+                    } else if (lowSurrogate != -1) {
+                        bufferedReader.reset();
+                    }
+                }
                 global++;
                 count++;
                 if (currentChar == 10) {
-                    sourceLines.add(new SourceLine(totalLines, count, global - count, global));
+                    sourceLines.add(newSourceLine(totalLines, count, global, supplementaryOffsets));
                     totalLines++;
                     count = 0;
+                    supplementaryOffsets.clear();
                 }
 
             }
-            sourceLines.add(new SourceLine(totalLines, count, global - count, global));
+            sourceLines.add(newSourceLine(totalLines, count, global, supplementaryOffsets));
         } catch (final Exception e) {
             LOGGER.warn("Error occurred reading file", e);
         }
 
         return sourceLines.toArray(new SourceLine[0]);
+    }
+
+    private static SourceLine newSourceLine(final int line, final int count, final int global,
+                                            final List<Integer> supplementaryOffsets) {
+        return new SourceLine(line, count, global - count, global,
+                supplementaryOffsets.stream().mapToInt(Integer::intValue).toArray());
     }
 
     public BOMInputStream bomInputStream(final InputStream inputStream) throws IOException {

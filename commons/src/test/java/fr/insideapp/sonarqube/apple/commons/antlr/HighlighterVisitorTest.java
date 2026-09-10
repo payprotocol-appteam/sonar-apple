@@ -18,117 +18,189 @@
 package fr.insideapp.sonarqube.apple.commons.antlr;
 
 import fr.insideapp.sonarqube.apple.commons.SourceLine;
+import fr.insideapp.sonarqube.apple.commons.SourceLinesProvider;
+import org.antlr.v4.runtime.CommonToken;
 import org.antlr.v4.runtime.Token;
 import org.junit.Test;
+import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.internal.DefaultInputFile;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
 import org.sonar.api.batch.sensor.highlighting.TypeOfText;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.Set;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class HighlighterVisitorTest {
-    private static final Set<Integer> commentTypes = Set.of(1,2,3);
-    private static final Set<Integer> stringTypes = Set.of(4,5);
-    private static final Set<Integer> preprocessTypes = Set.of(6,7);
+    private static final int COMMENT_TYPE = 2;
+    private static final int STRING_TYPE = 4;
+    private static final int PREPROCESS_TYPE = 6;
+    private static final int KEYWORD_LIGHT_TYPE = 8;
+    private static final int KEYWORD_TYPE = 10;
+    private static final int WHITESPACE_TYPE = 100;
+
+    private static final Set<Integer> commentTypes = Set.of(1, 2, 3);
+    private static final Set<Integer> stringTypes = Set.of(4, 5);
+    private static final Set<Integer> preprocessTypes = Set.of(6, 7);
     private static final Set<Integer> keywordLightTypes = Set.of(8);
-    private static final Set<Integer> keywordTypes = Set.of(8,9,10,11);
-    private static final int whitespaceType = 100;
+    private static final Set<Integer> keywordTypes = Set.of(9, 10, 11);
 
-    @Test
-    public void fillContext() {
-        SensorContextTester sensorContext = SensorContextTester.create(new File(""));
-        DefaultInputFile testFile = new TestInputFileBuilder("foo", "test.extension")
-                .setLines(5)
-                .setOriginalLineEndOffsets(new int[5])
-                .setOriginalLineStartOffsets(new int[5])
-                .setModuleBaseDir(Paths.get("/"))
-                .setContents("a\nb\nc\nd\ne")
-                .build();
-        sensorContext.fileSystem().add(testFile);
+    /**
+     * Minimal {@link AntlrContext} holding a line table and a list of tokens, so that the real
+     * {@link AntlrContext#getLineAndColumn(int)} implementation is exercised.
+     */
+    private static final class StubAntlrContext extends AntlrContext {
 
-        SourceLine[] lines = {
-                new SourceLine(0,1,0,1),
-                new SourceLine(1,1,0,1),
-                new SourceLine(2,1,0,1),
-                new SourceLine(3,1,0,1),
-                new SourceLine(4,1,0,1)
-        };
+        private Token[] tokens = new Token[0];
 
-        Token commentToken = mock(Token.class);
-        when(commentToken.getText()).thenReturn("a");
-        when(commentToken.getType()).thenReturn(2);
-        when(commentToken.getLine()).thenReturn(1);
-        when(commentToken.getCharPositionInLine()).thenReturn(0);
-        when(commentToken.getStopIndex()).thenReturn(1);
+        @Override
+        public void loadFromStreams(InputFile inputFile, InputStream file, InputStream linesStream, Charset charset) {
+            setFile(inputFile);
+            setLines(new SourceLinesProvider().getLines(linesStream, charset));
+        }
 
-        Token stringToken = mock(Token.class);
-        when(stringToken.getText()).thenReturn("b");
-        when(stringToken.getType()).thenReturn(4);
-        when(stringToken.getLine()).thenReturn(2);
-        when(stringToken.getCharPositionInLine()).thenReturn(0);
-        when(stringToken.getStopIndex()).thenReturn(2);
+        void load(InputFile inputFile, String contents, Token... tokens) {
+            loadFromStreams(inputFile, null,
+                    new ByteArrayInputStream(contents.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
+            this.tokens = tokens;
+        }
 
-        Token preprocessToken = mock(Token.class);
-        when(preprocessToken.getText()).thenReturn("c");
-        when(preprocessToken.getType()).thenReturn(6);
-        when(preprocessToken.getLine()).thenReturn(3);
-        when(preprocessToken.getCharPositionInLine()).thenReturn(0);
-        when(preprocessToken.getStopIndex()).thenReturn(3);
+        @Override
+        public Token[] getTokens() {
+            return tokens;
+        }
+    }
 
-        Token keywordLightToken = mock(Token.class);
-        when(keywordLightToken.getText()).thenReturn("d");
-        when(keywordLightToken.getType()).thenReturn(8);
-        when(keywordLightToken.getLine()).thenReturn(4);
-        when(keywordLightToken.getCharPositionInLine()).thenReturn(0);
-        when(keywordLightToken.getStopIndex()).thenReturn(4);
+    private static Token token(int type, String text, int startIndex) {
+        final CommonToken token = new CommonToken(type, text);
+        token.setStartIndex(startIndex);
+        // A token index is a code point index: a supplementary character counts for one
+        token.setStopIndex(startIndex + text.codePointCount(0, text.length()) - 1);
+        return token;
+    }
 
-        Token keywordToken = mock(Token.class);
-        when(keywordToken.getText()).thenReturn("e");
-        when(keywordToken.getType()).thenReturn(10);
-        when(keywordToken.getLine()).thenReturn(5);
-        when(keywordToken.getCharPositionInLine()).thenReturn(0);
-        when(keywordToken.getStopIndex()).thenReturn(5);
-
-        Token[] tokens = {commentToken, stringToken, preprocessToken, keywordLightToken, keywordToken};
-
-        AntlrContext antlrContext = mock(AntlrContext.class);
-        when(antlrContext.getLines()).thenReturn(lines);
-        when(antlrContext.getTokens()).thenReturn(tokens);
-        when(antlrContext.getFile()).thenReturn(testFile);
-        when(antlrContext.getLineAndColumn(1)).thenReturn(new int[]{1, 0});
-        when(antlrContext.getLineAndColumn(2)).thenReturn(new int[]{2, 0});
-        when(antlrContext.getLineAndColumn(3)).thenReturn(new int[]{3, 0});
-        when(antlrContext.getLineAndColumn(4)).thenReturn(new int[]{4, 0});
-        when(antlrContext.getLineAndColumn(5)).thenReturn(new int[]{5, 0});
-
-        HighlighterVisitor visitor = new HighlighterVisitor.Builder()
+    private static HighlighterVisitor visitor() {
+        return new HighlighterVisitor.Builder()
                 .commentTypes(commentTypes)
                 .stringTypes(stringTypes)
                 .preprocessTypes(preprocessTypes)
                 .keywordLightTypes(keywordLightTypes)
                 .keywordTypes(keywordTypes)
-                .whitespaceType(whitespaceType)
+                .whitespaceType(WHITESPACE_TYPE)
                 .build();
-        visitor.fillContext(sensorContext, antlrContext);
+    }
 
-        // Asserting
+    private static DefaultInputFile inputFile(String contents) {
+        return new TestInputFileBuilder("foo", "test.extension")
+                .setModuleBaseDir(Paths.get("/"))
+                .setCharset(StandardCharsets.UTF_8)
+                .setContents(contents)
+                .initMetadata(contents)
+                .build();
+    }
+
+    @Test
+    public void fillContext() {
+        // 1 : let ab = 1
+        // 2 : // hi
+        // 3 : "text"
+        // 4 : #import
+        final String contents = "let ab = 1\n// hi\n\"text\"\n#import\n";
+        SensorContextTester sensorContext = SensorContextTester.create(new File(""));
+        DefaultInputFile testFile = inputFile(contents);
+        sensorContext.fileSystem().add(testFile);
+
+        StubAntlrContext antlrContext = new StubAntlrContext();
+        antlrContext.load(testFile, contents,
+                token(KEYWORD_TYPE, "let", 0),
+                token(KEYWORD_LIGHT_TYPE, "ab", 4),
+                token(COMMENT_TYPE, "// hi\n", 11),
+                token(STRING_TYPE, "\"text\"", 17),
+                token(PREPROCESS_TYPE, "#import", 24));
+
+        visitor().fillContext(sensorContext, antlrContext);
+
         assertThat(sensorContext.highlightingTypeAt(testFile.key(), 1, 0))
-                .containsExactlyInAnyOrder(TypeOfText.COMMENT);
-        assertThat(sensorContext.highlightingTypeAt(testFile.key(), 2, 0))
-                .containsExactlyInAnyOrder(TypeOfText.STRING);
-        assertThat(sensorContext.highlightingTypeAt(testFile.key(), 3, 0))
-                .containsExactlyInAnyOrder(TypeOfText.PREPROCESS_DIRECTIVE);
-        assertThat(sensorContext.highlightingTypeAt(testFile.key(), 4, 0))
-                .containsExactlyInAnyOrder(TypeOfText.KEYWORD_LIGHT);
-        assertThat(sensorContext.highlightingTypeAt(testFile.key(), 5, 0))
                 .containsExactlyInAnyOrder(TypeOfText.KEYWORD);
+        assertThat(sensorContext.highlightingTypeAt(testFile.key(), 1, 2))
+                .containsExactlyInAnyOrder(TypeOfText.KEYWORD);
+        assertThat(sensorContext.highlightingTypeAt(testFile.key(), 1, 3)).isEmpty();
+        assertThat(sensorContext.highlightingTypeAt(testFile.key(), 1, 4))
+                .containsExactlyInAnyOrder(TypeOfText.KEYWORD_LIGHT);
+        assertThat(sensorContext.highlightingTypeAt(testFile.key(), 1, 5))
+                .containsExactlyInAnyOrder(TypeOfText.KEYWORD_LIGHT);
+        assertThat(sensorContext.highlightingTypeAt(testFile.key(), 1, 6)).isEmpty();
+        // The line comment token swallows its end of line: the range must stop at the end of the line
+        assertThat(sensorContext.highlightingTypeAt(testFile.key(), 2, 0))
+                .containsExactlyInAnyOrder(TypeOfText.COMMENT);
+        assertThat(sensorContext.highlightingTypeAt(testFile.key(), 2, 4))
+                .containsExactlyInAnyOrder(TypeOfText.COMMENT);
+        assertThat(sensorContext.highlightingTypeAt(testFile.key(), 3, 5))
+                .containsExactlyInAnyOrder(TypeOfText.STRING);
+        assertThat(sensorContext.highlightingTypeAt(testFile.key(), 4, 6))
+                .containsExactlyInAnyOrder(TypeOfText.PREPROCESS_DIRECTIVE);
+    }
+
+    /**
+     * Regression test for the "Unexpected error creating text range" warnings: ANTLR indexes count code points
+     * whereas SonarQube offsets count UTF-16 code units. Before the fix, every token following a supplementary
+     * character (an emoji, typically) was shifted by one, producing empty or reversed ranges.
+     */
+    @Test
+    public void fillContextWithSupplementaryCharacters() {
+        // 1 : // 🧭 nav
+        // 2 :     if ok {}
+        final String contents = "// 🧭 nav\n    if ok {}\n";
+        SensorContextTester sensorContext = SensorContextTester.create(new File(""));
+        DefaultInputFile testFile = inputFile(contents);
+        sensorContext.fileSystem().add(testFile);
+
+        // Code point indexes: the comment spans 0 to 8, line 2 starts at 9, `if` at 13 and `ok` at 16
+        StubAntlrContext antlrContext = new StubAntlrContext();
+        antlrContext.load(testFile, contents,
+                token(COMMENT_TYPE, "// 🧭 nav\n", 0),
+                token(KEYWORD_TYPE, "if", 13),
+                token(KEYWORD_LIGHT_TYPE, "ok", 16));
+
+        visitor().fillContext(sensorContext, antlrContext);
+
+        // `nav` sits after the emoji: its UTF-16 offsets are shifted by one compared to the code point ones
+        assertThat(sensorContext.highlightingTypeAt(testFile.key(), 1, 6))
+                .containsExactlyInAnyOrder(TypeOfText.COMMENT);
+        assertThat(sensorContext.highlightingTypeAt(testFile.key(), 1, 8))
+                .containsExactlyInAnyOrder(TypeOfText.COMMENT);
+        assertThat(sensorContext.highlightingTypeAt(testFile.key(), 2, 4))
+                .containsExactlyInAnyOrder(TypeOfText.KEYWORD);
+        assertThat(sensorContext.highlightingTypeAt(testFile.key(), 2, 5))
+                .containsExactlyInAnyOrder(TypeOfText.KEYWORD);
+        assertThat(sensorContext.highlightingTypeAt(testFile.key(), 2, 6)).isEmpty();
+        assertThat(sensorContext.highlightingTypeAt(testFile.key(), 2, 7))
+                .containsExactlyInAnyOrder(TypeOfText.KEYWORD_LIGHT);
+    }
+
+    @Test
+    public void lineAndColumnAreUtf16Based() {
+        final SourceLine[] lines = new SourceLinesProvider().getLines(
+                new ByteArrayInputStream("a🧭b\nc\n".getBytes(StandardCharsets.UTF_8)),
+                StandardCharsets.UTF_8);
+        StubAntlrContext antlrContext = new StubAntlrContext();
+        antlrContext.setLines(lines);
+
+        // 4 code points on the first line: a, the emoji, b and the end of line
+        assertThat(lines[0].getStart()).isZero();
+        assertThat(lines[0].getEnd()).isEqualTo(4);
+        assertThat(antlrContext.getLineAndColumn(0)).containsExactly(1, 0);
+        assertThat(antlrContext.getLineAndColumn(1)).containsExactly(1, 1);
+        // `b` is the third code point but the fourth UTF-16 code unit
+        assertThat(antlrContext.getLineAndColumn(2)).containsExactly(1, 3);
+        assertThat(antlrContext.getLineAndColumn(4)).containsExactly(2, 0);
+        assertThat(antlrContext.getLineAndColumn(1000)).isEmpty();
     }
 }
