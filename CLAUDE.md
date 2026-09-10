@@ -12,7 +12,7 @@ Modules: `commons` (shared sensors/parsers/ANTLR plumbing) → `swift-lang`, `ob
 JDK 17, Maven 3.8+.
 
 ```bash
-mvn -B clean package     # compile + 226 tests + plugin jar
+mvn -B clean package     # compile + 227 tests + plugin jar
 mvn -B license:check     # LGPL header check (CI runs it; `mvn license:format` fixes)
 ```
 
