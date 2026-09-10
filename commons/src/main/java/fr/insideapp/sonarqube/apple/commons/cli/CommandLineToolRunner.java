@@ -18,14 +18,14 @@
 package fr.insideapp.sonarqube.apple.commons.cli;
 
 import org.buildobjects.process.ProcBuilder;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Set;
 
 public abstract class CommandLineToolRunner {
 
-    private static final Logger LOGGER = Loggers.get(CommandLineToolRunner.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CommandLineToolRunner.class);
     private static final int COMMAND_TIMEOUT = 10 * 60 * 1000;
     private static final Integer DEFAULT_COMMAND_EXIT_CODE = 0;
     private final String command;

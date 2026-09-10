@@ -36,6 +36,11 @@ public class PeripheryExtensionProvider implements ExtensionProvider {
     private static final String CATEGORY = "Periphery";
 
     private static final String INDEX_STORE_PATH_KEY = "sonar.apple.periphery.indexStorePath";
+    // `Qualifiers` / `onQualifiers` are deprecated for removal in favour of `ConfigScope` /
+    // `onConfigScopes`, introduced in sonar-plugin-api 11.0.0.2664. Keeping the old form is what lets
+    // the plugin still declare `pluginApiMinVersion` 9.14 (SonarQube 9.9 LTA). Switch over as soon as
+    // the 9.9 line is dropped.
+    @SuppressWarnings({"deprecation", "removal"})
     private static final PropertyDefinition INDEX_STORE_PATH_PROPERTY = PropertyDefinition
             .builder(INDEX_STORE_PATH_KEY)
             .name("Index Store folder path")

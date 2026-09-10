@@ -18,15 +18,15 @@
 package fr.insideapp.sonarqube.apple.commons.parser;
 
 import fr.insideapp.sonarqube.apple.commons.interfaces.ReportParsable;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class ReportListParser<T> implements ReportParsable<List<T>> {
 
-    private static final Logger LOGGER = Loggers.get(ReportListParser.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReportListParser.class);
 
     protected abstract String objectName();
 

@@ -21,13 +21,13 @@ import org.sonar.api.batch.fs.FilePredicate;
 import org.sonar.api.batch.fs.FileSystem;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.scanner.ScannerSide;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @ScannerSide
 public abstract class AbstractLanguageTestFileFinder {
 
-    private static final Logger LOGGER = Loggers.get(AbstractLanguageTestFileFinder.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractLanguageTestFileFinder.class);
 
     private String extension;
 

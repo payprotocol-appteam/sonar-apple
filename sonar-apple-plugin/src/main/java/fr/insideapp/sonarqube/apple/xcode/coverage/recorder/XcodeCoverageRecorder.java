@@ -24,15 +24,15 @@ import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.coverage.NewCoverage;
 import org.sonar.api.scanner.ScannerSide;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 @ScannerSide
 public final class XcodeCoverageRecorder implements XcodeCoverageRecordable {
 
-    private static final Logger LOGGER = Loggers.get(XcodeCoverageRecorder.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(XcodeCoverageRecorder.class);
 
     private final SensorContext context;
 
@@ -78,7 +78,10 @@ public final class XcodeCoverageRecorder implements XcodeCoverageRecordable {
         if(context.fileSystem().hasFiles(fp)) {
             return context.fileSystem().inputFile(fp);
         } else {
-            LOGGER.warn("Can't find file {}", filePath);
+            // Expected, not actionable: an Xcode result bundle carries coverage for everything that got
+            // compiled, SPM checkouts and system frameworks included, and none of those belong to
+            // sonar.sources. Warning on each of them buried the analysis log (666 lines on one iOS project).
+            LOGGER.debug("Coverage reported for a file that is not part of the project, ignoring: {}", filePath);
             return null;
         }
     }

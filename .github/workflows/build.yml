@@ -1,0 +1,53 @@
+# Fork build: plain JDK 17 + Maven verify on Linux.
+#
+# Upstream's `ci.yml` runs on macOS and publishes to insideapp's SonarCloud organization, which needs
+# secrets this fork does not have. This workflow is what actually gates our branches: it only needs the
+# repository itself, so it stays free on a public repository.
+name: Build
+
+on:
+  # Branch pushes are covered by the pull_request trigger; listing '**' here made every PR branch
+  # build twice.
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'maven'
+
+      - name: License header check
+        run: mvn -B license:check
+
+      - name: Verify
+        run: mvn -B verify
+
+      - name: Upload plugin jar
+        uses: actions/upload-artifact@v4
+        with:
+          name: sonar-apple-plugin
+          path: sonar-apple-plugin/target/sonar-apple-plugin-*.jar
+          if-no-files-found: error
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-reports
+          path: '*/target/surefire-reports/**'
+          if-no-files-found: warn

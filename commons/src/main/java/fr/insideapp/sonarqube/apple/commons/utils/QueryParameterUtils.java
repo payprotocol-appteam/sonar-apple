@@ -18,8 +18,8 @@
 package fr.insideapp.sonarqube.apple.commons.utils;
 
 import org.apache.commons.lang3.StringUtils;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +27,7 @@ import java.util.stream.Stream;
 
 public final class QueryParameterUtils {
 
-    private static final Logger LOGGER = Loggers.get(QueryParameterUtils.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(QueryParameterUtils.class);
 
     private QueryParameterUtils() {}
     public static Map<String, String> parse(String rawQuery) {

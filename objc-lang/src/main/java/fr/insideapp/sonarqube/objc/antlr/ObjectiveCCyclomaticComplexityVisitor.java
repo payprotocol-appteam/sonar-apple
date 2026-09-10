@@ -26,15 +26,15 @@ import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.measures.CoreMetrics;
 import org.sonar.api.scanner.ScannerSide;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static java.lang.String.format;
 
 @ScannerSide
 public class ObjectiveCCyclomaticComplexityVisitor implements ParseTreeItemVisitor  {
 
-    private static final Logger LOGGER = Loggers.get(ObjectiveCCyclomaticComplexityVisitor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ObjectiveCCyclomaticComplexityVisitor.class);
 
     private int complexity = 0;
 

@@ -38,7 +38,9 @@ public class SwiftAntlrContext extends AntlrContext {
     @Override
     public void loadFromStreams(InputFile inputFile, InputStream file, InputStream linesStream, Charset charset) throws IOException {
         final SourceLinesProvider linesProvider = new SourceLinesProvider();
-        final CharStream charStream = CharStreams.fromStream(file, charset);
+        // The byte order mark is stripped on both streams, so that ANTLR token indexes and the line table
+        // built below share the same origin.
+        final CharStream charStream = CharStreams.fromStream(linesProvider.bomInputStream(file), charset);
         final Swift5Lexer lexer = new Swift5Lexer(charStream);
         lexer.removeErrorListeners();
         final CommonTokenStream stream = new CommonTokenStream(lexer);

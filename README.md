@@ -1,4 +1,27 @@
 
+> ## payprotocol-appteam fork
+>
+> This is a fork of [**insideapp-fr/sonar-apple**](https://github.com/insideapp-fr/sonar-apple) (0.5.1),
+> kept because upstream targets the SonarQube 9.9 LTA and has not been released against the
+> SonarQube 26.x Community Build line, which is what the app team runs.
+>
+> ### What differs from upstream
+>
+> | Area | Upstream 0.5.1 | This fork |
+> |---|---|---|
+> | Syntax highlighting / CPD ranges | Token indexes (code points) compared against a UTF-16 line table, so a single emoji in a file shifted every following token — 3,223 `Unexpected error creating text range` warnings on one iOS project scan ([upstream #105](https://github.com/insideapp-fr/sonar-apple/issues/105)) | Line table is code point based and only the column is converted to UTF-16; end offsets are always `last character + 1`, trailing end-of-line trimmed |
+> | `sonar.api.version` | 9.14.0.375 | 13.8.0.4399 — the API bundled with Community Build 26.9 |
+> | `pluginApiMinVersion` | follows `sonar.api.version` | pinned to 9.14.0.375, so the plugin still loads on the 9.9 LTA |
+> | Logging | `org.sonar.api.utils.log.Loggers` (deprecated) | SLF4J |
+> | `Jre-Min-Version` | 11, while classes are compiled for 17 | 17 |
+> | Plugin jar | 14.9 MB, with junit / byte-buddy / guava / xerces bundled | 4.4 MB, unused dependencies dropped |
+> | SwiftLint rules | 233 (SwiftLint ~0.5x) | 262 (SwiftLint 0.65.1) |
+> | CI | macOS + upstream SonarCloud secrets | `build.yml`: ubuntu-latest, `mvn -B verify`, jar artifact |
+>
+> Everything else — sensors, properties, rule keys, report formats — is unchanged, so a
+> `sonar-project.properties` written for upstream keeps working. Contributor documentation is in
+> [`DEVELOP.md`](DEVELOP.md), the agent-facing build/verify notes in [`CLAUDE.md`](CLAUDE.md).
+
 ![CI](https://github.com/insideapp-fr/sonar-flutter/workflows/CI/badge.svg)
 
 [![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=insideapp-oss_sonar-apple&metric=sqale_index)](https://sonarcloud.io/summary/new_code?id=insideapp-oss_sonar-apple)
@@ -33,7 +56,7 @@ The plugin is designed to support Swift 5 syntax.
 
 ### Server-side
 
-SonarQube 9.9+ is required.
+SonarQube 9.9+ is required. This fork is verified on SonarQube Community Build 26.9.0.129388.
 
 - Download the plugin binary into the ``$SONARQUBE_HOME/extensions/plugins`` directory.
 - Restart the server.

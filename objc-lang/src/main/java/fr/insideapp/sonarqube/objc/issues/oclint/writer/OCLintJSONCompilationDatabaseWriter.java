@@ -20,8 +20,8 @@ package fr.insideapp.sonarqube.objc.issues.oclint.writer;
 import fr.insideapp.sonarqube.objc.issues.oclint.OCLintExtensionProvider;
 import org.sonar.api.batch.fs.FileSystem;
 import org.sonar.api.scanner.ScannerSide;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.io.File;
@@ -31,7 +31,7 @@ import java.io.IOException;
 @ScannerSide
 public final class OCLintJSONCompilationDatabaseWriter implements OCLintJSONCompilationDatabaseWritable {
 
-    private static final Logger LOGGER = Loggers.get(OCLintJSONCompilationDatabaseWriter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OCLintJSONCompilationDatabaseWriter.class);
 
     private final OCLintExtensionProvider ocLintExtensionProvider;
     private final FileSystem fileSystem;
