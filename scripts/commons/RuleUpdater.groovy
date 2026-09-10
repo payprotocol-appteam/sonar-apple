@@ -98,6 +98,14 @@ class RuleUpdater {
 
         def rulesCompleted = [] as ArrayList<Rule>
 
+        // Non interactive mode: the prompts below read stdin, which no CI (nor an agent) can answer.
+        // Passing -Drules.default.severity / -Drules.default.type / -Drules.default.debt fills every
+        // new rule with those values instead of asking. Always review the diff afterwards.
+        def defaultSeverity = System.getProperty('rules.default.severity')
+        def defaultType = System.getProperty('rules.default.type')
+        def defaultDebt = System.getProperty('rules.default.debt')
+        def nonInteractive = defaultSeverity != null && defaultType != null && defaultDebt != null
+
         use(ConsoleString) {
             rules.each { r ->
 
@@ -106,6 +114,23 @@ class RuleUpdater {
                     println "Missing information on rule ${r.key}".style(ConsoleString.Color.YELLOW)
                     println "${r.description}".style(ConsoleString.Color.DEFAULT)
                     println ""
+
+                    if (nonInteractive) {
+                        if (r.severity == null) {
+                            r.severity = Enum.valueOf(Rule.Severity.class, defaultSeverity)
+                        }
+                        if (r.type == null) {
+                            r.type = Enum.valueOf(Rule.Type.class, defaultType)
+                        }
+                        if (r.debt == null) {
+                            r.debt = defaultDebt
+                        }
+                        println "Defaults applied: ${r.severity.name()} / ${r.type.name()} / ${r.debt}"
+                                .style(ConsoleString.Color.DEFAULT_BOLD)
+                        rulesCompleted.add(r)
+                        return
+                    }
+
                     if (r.name == null) {
                         r.name = new Prompt("Name?", null).promptText()
                         println r.name.style(ConsoleString.Color.DEFAULT_BOLD)

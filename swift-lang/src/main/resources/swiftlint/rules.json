@@ -1862,5 +1862,237 @@
         "description": "Remove overridden functions that don't do anything except call their super",
         "type": "CODE_SMELL",
         "debt": "5min"
+    },
+    {
+        "key": "async_without_await",
+        "name": "Async Without Await",
+        "severity": "MINOR",
+        "description": "Declaration should not be async if it doesn't use await",
+        "type": "CODE_SMELL",
+        "debt": "5min"
+    },
+    {
+        "key": "attribute_name_spacing",
+        "name": "Attribute Name Spacing",
+        "severity": "MINOR",
+        "description": "This rule prevents trailing spaces after attribute names, ensuring compatibility with Swift 6 where a space between an attribute name and the opening parenthesis results in a compilation error (e.g. `@MyPropertyWrapper ()`, `private (set)`).",
+        "type": "CODE_SMELL",
+        "debt": "5min"
+    },
+    {
+        "key": "contrasted_opening_brace",
+        "name": "Contrasted Opening Brace",
+        "severity": "MINOR",
+        "description": "The correct positioning of braces that introduce a block of code or member list is highly controversial. No matter which style is preferred, consistency is key. Apart from different tastes, the positioning of braces can also have a significant impact on the readability of the code, especially for visually impaired developers. This rule ensures that braces are on a separate line after the declaration to contrast the code block from the rest of the declaration. Comments between the declaration and the opening brace are respected. Check out the `opening_brace` rule for a different style.",
+        "type": "CODE_SMELL",
+        "debt": "5min"
+    },
+    {
+        "key": "discouraged_default_parameter",
+        "name": "Discouraged Default Parameter",
+        "severity": "MINOR",
+        "description": "Default parameter values should not be used in functions with certain access levels.",
+        "type": "CODE_SMELL",
+        "debt": "5min"
+    },
+    {
+        "key": "final_test_case",
+        "name": "Final Test Case",
+        "severity": "MINOR",
+        "description": "Test cases should be final",
+        "type": "CODE_SMELL",
+        "debt": "5min"
+    },
+    {
+        "key": "function_name_whitespace",
+        "name": "Function Name Whitespace",
+        "severity": "MINOR",
+        "description": "There should be consistent whitespace before and after function names and generic parameters.",
+        "type": "CODE_SMELL",
+        "debt": "5min"
+    },
+    {
+        "key": "implicit_optional_initialization",
+        "name": "Implicit Optional Initialization",
+        "severity": "MINOR",
+        "description": "Optionals should be consistently initialized, either with `= nil` or without.",
+        "type": "CODE_SMELL",
+        "debt": "5min"
+    },
+    {
+        "key": "incompatible_concurrency_annotation",
+        "name": "Incompatible Concurrency Annotation",
+        "severity": "MINOR",
+        "description": "Declaration should be @preconcurrency to maintain compatibility with Swift 5",
+        "type": "CODE_SMELL",
+        "debt": "5min"
+    },
+    {
+        "key": "invisible_character",
+        "name": "Invisible Character",
+        "severity": "MINOR",
+        "description": "Disallows invisible characters like zero-width space (U+200B), zero-width non-joiner (U+200C), and FEFF formatting character (U+FEFF) in string literals as they can cause hard-to-debug issues.",
+        "type": "CODE_SMELL",
+        "debt": "5min"
+    },
+    {
+        "key": "legacy_swiftui_aspect_ratio",
+        "name": "Legacy SwiftUI Aspect Ratio",
+        "severity": "MINOR",
+        "description": "Prefer `scaledToFit()` or `scaledToFill()` over `aspectRatio(contentMode:)` with a constant content mode",
+        "type": "CODE_SMELL",
+        "debt": "5min"
+    },
+    {
+        "key": "legacy_uigraphics_function",
+        "name": "Legacy UIGraphics Function",
+        "severity": "MINOR",
+        "description": "Prefer using `UIGraphicsImageRenderer` over legacy functions",
+        "type": "CODE_SMELL",
+        "debt": "5min"
+    },
+    {
+        "key": "multiline_call_arguments",
+        "name": "Multiline Call Arguments",
+        "severity": "MINOR",
+        "description": "Enforces one-argument-per-line for multi-line calls and requires a newline after commas when arguments are split across lines;",
+        "type": "CODE_SMELL",
+        "debt": "5min"
+    },
+    {
+        "key": "no_empty_block",
+        "name": "No Empty Block",
+        "severity": "MINOR",
+        "description": "Code blocks should contain at least one statement or comment",
+        "type": "CODE_SMELL",
+        "debt": "5min"
+    },
+    {
+        "key": "non_optional_string_data_conversion",
+        "name": "Non-optional String -> Data Conversion",
+        "severity": "MINOR",
+        "description": "Prefer non-optional `Data(_:)` initializer when converting `String` to `Data`",
+        "type": "CODE_SMELL",
+        "debt": "5min"
+    },
+    {
+        "key": "one_declaration_per_file",
+        "name": "One Declaration per File",
+        "severity": "MINOR",
+        "description": "Only a single declaration is allowed in a file",
+        "type": "CODE_SMELL",
+        "debt": "5min"
+    },
+    {
+        "key": "optional_data_string_conversion",
+        "name": "Optional Data -> String Conversion",
+        "severity": "MINOR",
+        "description": "Prefer failable `String(bytes:encoding:)` initializer when converting `Data` to `String`",
+        "type": "CODE_SMELL",
+        "debt": "5min"
+    },
+    {
+        "key": "prefer_asset_symbols",
+        "name": "Prefer Asset Symbols",
+        "severity": "MINOR",
+        "description": "Prefer using asset symbols over string-based image initialization",
+        "type": "CODE_SMELL",
+        "debt": "5min"
+    },
+    {
+        "key": "prefer_condition_list",
+        "name": "Prefer Condition List",
+        "severity": "MINOR",
+        "description": "Prefer a condition list over chaining conditions with '&&'",
+        "type": "CODE_SMELL",
+        "debt": "5min"
+    },
+    {
+        "key": "prefer_key_path",
+        "name": "Prefer Key Path",
+        "severity": "MINOR",
+        "description": "Use a key path argument instead of a closure with property access",
+        "type": "CODE_SMELL",
+        "debt": "5min"
+    },
+    {
+        "key": "prefer_type_checking",
+        "name": "Prefer Type Checking",
+        "severity": "MINOR",
+        "description": "Prefer `a is X` to `a as? X != nil`",
+        "type": "CODE_SMELL",
+        "debt": "5min"
+    },
+    {
+        "key": "redundant_final",
+        "name": "Redundant Final",
+        "severity": "MINOR",
+        "description": "`final` is redundant",
+        "type": "CODE_SMELL",
+        "debt": "5min"
+    },
+    {
+        "key": "redundant_self",
+        "name": "Redundant Self",
+        "severity": "MINOR",
+        "description": "Explicit use of 'self' is not required",
+        "type": "CODE_SMELL",
+        "debt": "5min"
+    },
+    {
+        "key": "redundant_sendable",
+        "name": "Redundant Sendable",
+        "severity": "MINOR",
+        "description": "Sendable conformance is redundant on an actor-isolated type",
+        "type": "CODE_SMELL",
+        "debt": "5min"
+    },
+    {
+        "key": "shorthand_argument",
+        "name": "Shorthand Argument",
+        "severity": "MINOR",
+        "description": "Shorthand arguments like `$0`, `$1`, etc. in closures can be confusing. Avoid using them too far away from the beginning of the closure. Optionally, while usage of a single shorthand argument is okay, more than one or complex ones with field accesses might increase the risk of obfuscation.",
+        "type": "CODE_SMELL",
+        "debt": "5min"
+    },
+    {
+        "key": "static_over_final_class",
+        "name": "Static Over Final Class",
+        "severity": "MINOR",
+        "description": "Prefer `static` over `class` when the declaration is not allowed to be overridden in child classes due to its context being final. Likewise, the compiler complains about `open` being used in `final` classes.",
+        "type": "CODE_SMELL",
+        "debt": "5min"
+    },
+    {
+        "key": "unneeded_escaping",
+        "name": "Unneeded Escaping",
+        "severity": "MINOR",
+        "description": "The `@escaping` attribute should only be used when the closure actually escapes.",
+        "type": "CODE_SMELL",
+        "debt": "5min"
+    },
+    {
+        "key": "unneeded_throws_rethrows",
+        "name": "Unneeded (Re)Throws Keyword",
+        "severity": "MINOR",
+        "description": "Non-throwing functions/properties/closures should not be marked as `throws` or `rethrows`.",
+        "type": "CODE_SMELL",
+        "debt": "5min"
+    },
+    {
+        "key": "unused_parameter",
+        "name": "Unused Parameter",
+        "severity": "MINOR",
+        "description": "Other than unused local variable declarations, unused function/initializer/subscript parameters are not marked by the Swift compiler. Since unused parameters are code smells, they should either be removed or replaced/shadowed by a wildcard '_' to indicate that they are being deliberately disregarded.",
+        "type": "CODE_SMELL",
+        "debt": "5min"
+    },
+    {
+        "key": "variable_shadowing",
+        "name": "Variable Shadowing",
+        "severity": "MINOR",
+        "description": "Do not shadow variables declared in outer scopes",
+        "type": "CODE_SMELL",
+        "debt": "5min"
     }
 ]
