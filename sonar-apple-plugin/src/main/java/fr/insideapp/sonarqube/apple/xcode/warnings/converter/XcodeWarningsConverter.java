@@ -25,8 +25,8 @@ import fr.insideapp.sonarqube.apple.xcode.warnings.models.XcodeWarningType;
 import fr.insideapp.sonarqube.apple.xcode.warnings.parser.models.DocumentLocation;
 import fr.insideapp.sonarqube.apple.xcode.warnings.parser.models.WarningSummary;
 import org.sonar.api.scanner.ScannerSide;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.util.*;
@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 @ScannerSide
 public final class XcodeWarningsConverter extends AbstractReportMapper<List<WarningSummary>, XcodeWarning> implements XcodeWarningConvertible {
 
-    private static final Logger LOGGER = Loggers.get(XcodeWarningsConverter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(XcodeWarningsConverter.class);
 
     @Override
     protected Set<XcodeWarning> perform(List<WarningSummary> input) throws Exception {

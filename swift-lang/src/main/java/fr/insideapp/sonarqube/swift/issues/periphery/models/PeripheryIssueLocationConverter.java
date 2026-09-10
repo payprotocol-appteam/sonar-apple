@@ -19,12 +19,12 @@ package fr.insideapp.sonarqube.swift.issues.periphery.models;
 
 import com.fasterxml.jackson.databind.util.StdConverter;
 import org.apache.commons.lang3.StringUtils;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PeripheryIssueLocationConverter extends StdConverter<String, PeripheryIssueLocation> {
 
-    private static final Logger LOGGER = Loggers.get(PeripheryIssueLocationConverter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PeripheryIssueLocationConverter.class);
 
     private static final String SEPARATOR = ":";
 

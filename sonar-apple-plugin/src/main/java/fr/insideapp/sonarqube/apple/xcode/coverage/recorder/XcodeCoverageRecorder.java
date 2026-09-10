@@ -24,15 +24,15 @@ import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.coverage.NewCoverage;
 import org.sonar.api.scanner.ScannerSide;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 @ScannerSide
 public final class XcodeCoverageRecorder implements XcodeCoverageRecordable {
 
-    private static final Logger LOGGER = Loggers.get(XcodeCoverageRecorder.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(XcodeCoverageRecorder.class);
 
     private final SensorContext context;
 

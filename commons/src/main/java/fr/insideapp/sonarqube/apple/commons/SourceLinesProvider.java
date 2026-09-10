@@ -18,8 +18,8 @@
 package fr.insideapp.sonarqube.apple.commons;
 
 import org.apache.commons.io.input.BOMInputStream;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SourceLinesProvider {
-    private static final Logger LOGGER = Loggers.get(SourceLinesProvider.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SourceLinesProvider.class);
 
     /**
      * Builds the line table of a file.

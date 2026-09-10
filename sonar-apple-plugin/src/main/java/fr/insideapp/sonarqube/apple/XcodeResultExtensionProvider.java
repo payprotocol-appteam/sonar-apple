@@ -37,6 +37,11 @@ public class XcodeResultExtensionProvider implements ExtensionProvider {
 
     private static final String RESULT_BUNDLE_PATH_KEY = "sonar.apple.resultBundlePath";
     private static final String DEFAULT_RESULT_BUNDLE_PATH = "build/result.xcresult";
+    // `Qualifiers` / `onQualifiers` are deprecated for removal in favour of `ConfigScope` /
+    // `onConfigScopes`, introduced in sonar-plugin-api 11.0.0.2664. Keeping the old form is what lets
+    // the plugin still declare `pluginApiMinVersion` 9.14 (SonarQube 9.9 LTA). Switch over as soon as
+    // the 9.9 line is dropped.
+    @SuppressWarnings({"deprecation", "removal"})
     private static final PropertyDefinition RESULT_BUNDLE_PROPERTY = PropertyDefinition
             .builder(RESULT_BUNDLE_PATH_KEY)
             .name("Xcode Result Bundle path")

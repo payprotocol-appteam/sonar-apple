@@ -17,12 +17,12 @@
  */
 package fr.insideapp.sonarqube.apple.commons.cli;
 
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class SingleCommandLineToolRunner extends CommandLineToolRunner {
 
-    private static final Logger LOGGER = Loggers.get(SingleCommandLineToolRunner.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SingleCommandLineToolRunner.class);
 
     protected SingleCommandLineToolRunner(String command) {
         super(command);

@@ -20,15 +20,15 @@ package fr.insideapp.sonarqube.apple.commons.rules;
 import org.sonar.api.resources.Language;
 import org.sonar.api.rules.RuleType;
 import org.sonar.api.server.rule.RulesDefinition;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
 
 public abstract class JSONRulesDefinition implements RulesDefinition {
 
-    private static final Logger LOGGER = Loggers.get(JSONRulesDefinition.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JSONRulesDefinition.class);
 
     private final String repositoryKey;
     private final String repositoryName;

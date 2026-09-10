@@ -18,15 +18,15 @@
 package fr.insideapp.sonarqube.apple.commons.mapper;
 
 import fr.insideapp.sonarqube.apple.commons.interfaces.ReportMappable;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
 import java.util.Set;
 
 public abstract class AbstractReportMapper<I, O> implements ReportMappable<I, O> {
 
-    private static final Logger LOGGER = Loggers.get(AbstractReportMapper.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractReportMapper.class);
 
     protected abstract Set<O> perform(I input) throws Exception;
 

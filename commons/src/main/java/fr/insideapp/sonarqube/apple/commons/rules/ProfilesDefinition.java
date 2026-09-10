@@ -19,15 +19,15 @@ package fr.insideapp.sonarqube.apple.commons.rules;
 
 import org.sonar.api.resources.Language;
 import org.sonar.api.server.profile.BuiltInQualityProfilesDefinition;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
 
 public abstract class ProfilesDefinition implements BuiltInQualityProfilesDefinition {
 
-    private static final Logger LOGGER = Loggers.get(ProfilesDefinition.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProfilesDefinition.class);
 
     private final Language language;
     private final RepositoryRuleParsable parser;

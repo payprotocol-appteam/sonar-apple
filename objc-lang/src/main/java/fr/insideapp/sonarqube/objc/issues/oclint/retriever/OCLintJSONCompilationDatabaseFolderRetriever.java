@@ -21,8 +21,8 @@ import fr.insideapp.sonarqube.objc.issues.oclint.OCLintExtensionProvider;
 import org.sonar.api.batch.fs.FileSystem;
 import org.sonar.api.config.Configuration;
 import org.sonar.api.scanner.ScannerSide;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.io.File;
@@ -30,7 +30,7 @@ import java.io.File;
 @ScannerSide
 public final class OCLintJSONCompilationDatabaseFolderRetriever implements OCLintJSONCompilationDatabaseFolderRetrievable {
 
-    private static final Logger LOGGER = Loggers.get(OCLintJSONCompilationDatabaseFolderRetriever.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OCLintJSONCompilationDatabaseFolderRetriever.class);
 
     private final OCLintExtensionProvider ocLintExtensionProvider;
 

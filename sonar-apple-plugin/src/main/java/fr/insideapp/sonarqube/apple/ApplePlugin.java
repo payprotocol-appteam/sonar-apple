@@ -31,12 +31,12 @@ import fr.insideapp.sonarqube.swift.SwiftExtensionProvider;
 import fr.insideapp.sonarqube.swift.issues.periphery.PeripheryExtensionProvider;
 import fr.insideapp.sonarqube.swift.issues.swiftlint.SwiftLintExtensionProvider;
 import org.sonar.api.Plugin;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ApplePlugin implements Plugin {
 
-    private static final Logger LOGGER = Loggers.get(ApplePlugin.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ApplePlugin.class);
 
     @Override
     public void define(Context context) {

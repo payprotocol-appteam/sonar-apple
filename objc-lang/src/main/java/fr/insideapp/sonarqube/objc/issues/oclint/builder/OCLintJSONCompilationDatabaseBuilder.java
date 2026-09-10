@@ -21,8 +21,8 @@ import fr.insideapp.sonarqube.apple.commons.ExtensionFileFilter;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RegExUtils;
 import org.sonar.api.scanner.ScannerSide;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.io.File;
@@ -37,7 +37,7 @@ public final class OCLintJSONCompilationDatabaseBuilder implements OCLintJSONCom
 
     private static final Pattern CLEAN_PATTERN = Pattern.compile("(\"-index-store-path.*DataStore\", |\"-index-unit-output-path.*\\.o\", )");
 
-    private static final Logger LOGGER = Loggers.get(OCLintJSONCompilationDatabaseBuilder.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OCLintJSONCompilationDatabaseBuilder.class);
 
     private final FileFilter jsonFileFilter;
 
