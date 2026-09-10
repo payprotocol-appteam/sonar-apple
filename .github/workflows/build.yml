@@ -6,8 +6,10 @@
 name: Build
 
 on:
+  # Branch pushes are covered by the pull_request trigger; listing '**' here made every PR branch
+  # build twice.
   push:
-    branches: ['**']
+    branches: [main]
   pull_request:
   workflow_dispatch:
 
